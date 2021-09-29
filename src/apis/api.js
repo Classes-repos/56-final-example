@@ -2,7 +2,7 @@ import axios from "axios";
 
 const apis = {
   development: "http://localhost:4000/api/v1",
-  production: "https://ih-project-management-app.herokuapp.com",
+  production: "https://ih-project-management-app.herokuapp.com/api/v1",
 };
 
 const api = axios.create({ baseURL: apis[process.env.NODE_ENV] });
