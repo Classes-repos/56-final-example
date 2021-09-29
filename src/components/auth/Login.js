@@ -2,6 +2,8 @@ import { useState, useContext, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import axios from "axios";
 
+import api from "../../apis/api";
+
 import TextInput from "../TextInput";
 import { authContext } from "../../contexts/authContext";
 
@@ -28,10 +30,7 @@ function Login() {
     event.preventDefault();
 
     try {
-      const response = await axios.post(
-        "http://localhost:4000/api/v1/login",
-        state
-      );
+      const response = await api.post("/login", state);
 
       setLoggedInUser({ ...response.data });
       localStorage.setItem("loggedInUser", JSON.stringify(response.data));
