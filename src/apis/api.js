@@ -1,6 +1,11 @@
 import axios from "axios";
 
-const api = axios.create({ baseURL: "http://localhost:4000/api/v1" });
+const apis = {
+  development: "http://localhost:4000/api/v1",
+  production: "https://ih-project-management-app.herokuapp.com",
+};
+
+const api = axios.create({ baseURL: apis[process.env.NODE_ENV] });
 
 api.interceptors.request.use((config) => {
   // Primeiro verifica se já existe um usuário logado no localStorage

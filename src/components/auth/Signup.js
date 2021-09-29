@@ -1,6 +1,7 @@
 import { useState, useEffect, useContext } from "react";
 import { useHistory } from "react-router-dom";
-import axios from "axios";
+
+import api from "../../apis/api";
 
 import TextInput from "../TextInput";
 import LoadingSpinner from "../LoadingSpinner";
@@ -10,7 +11,12 @@ import { authContext } from "../../contexts/authContext";
 
 function Signup() {
   // o useState é um Hook (função) que retorna uma array. No índice 0, está o seu state (que não é mais obrigatório como objeto, agora pode ser qualquer tipo de dado, como arrays, booleans ou strings) e no índice 1, está uma função para atualizar esse state. Assim como nas classes, toda vez que a função de atualização de state for invocada, o componente é re-renderizado
-  const [state, setState] = useState({ email: "", password: "", name: "" });
+  const [state, setState] = useState({
+    email: "",
+    password: "",
+    name: "",
+    profilePicture: "",
+  });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -27,8 +33,22 @@ function Signup() {
 
   function handleChange(event) {
     // CUIDADO: diferente das classes, a função de atualização de state dos Hooks é DESTRUTIVA, ou seja, ela substitui completamente o valor do state pelo que ela recebe como argumento. Dessa forma, precisamos salvar o state anterior antes de atualizar usando o operador spread
+    if (event.target.files) {
+      // Verifica se estamos no input de arquivo
+      return setState({ ...state, [event.target.name]: event.target.files[0] });
+    }
     setState({ ...state, [event.target.name]: event.target.value });
     //         ^ espalha o state anterior    ^ atualiza a chave do input atual
+  }
+
+  async function handleUpload(file) {
+    const uploadData = new FormData();
+
+    uploadData.append("profilePicture", file);
+
+    const response = await api.post("/image-upload", uploadData);
+
+    return response.data.url;
   }
 
   async function handleSubmit(event) {
@@ -36,10 +56,10 @@ function Signup() {
 
     try {
       setLoading(true);
-      const response = await axios.post(
-        "http://localhost:4000/api/v1/signup",
-        state
-      );
+
+      const pictureUrl = await handleUpload(state.profilePicture);
+
+      const response = await api.post("/signup", { ...state, pictureUrl });
       console.log(response);
 
       setLoading(false);
@@ -91,6 +111,14 @@ function Signup() {
           required
           onChange={handleChange}
           value={state.password}
+        />
+
+        <TextInput
+          label="Foto de perfil"
+          name="profilePicture"
+          id="signupFormPicture"
+          type="file"
+          onChange={handleChange}
         />
 
         {loading ? (
