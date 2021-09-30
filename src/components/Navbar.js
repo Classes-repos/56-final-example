@@ -29,8 +29,23 @@ function Navbar() {
         >
           <ul className="navbar-nav">
             <li className="nav-item">
-              <NavLink className="nav-link" to="/projetos">
+              <NavLink
+                className="nav-link"
+                activeClassName="active"
+                exact
+                to="/projetos"
+              >
                 Home
+              </NavLink>
+            </li>
+            <li className="nav-item">
+              <NavLink
+                className="nav-link"
+                activeClassName="active"
+                exact
+                to="/projeto/criar"
+              >
+                Novo Projeto
               </NavLink>
             </li>
             {loggedInUser.user._id ? (

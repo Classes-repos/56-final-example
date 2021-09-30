@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
-import { useParams, useHistory } from "react-router-dom";
+import { useParams, useHistory, Link } from "react-router-dom";
 
 import api from "../../apis/api"; // Instância do Axios pré-configurada
 
 import LoadingSpinner from "../LoadingSpinner";
 import ConfirmationModal from "../ConfirmationModal";
-import TaskCard from "./TaskCard";
-import TaskCreate from "./TaskCreate";
+import TaskCard from "../task/TaskCard";
+import TaskCreate from "../task/TaskCreate";
 
 function ProjectDetail() {
   const [projectDetails, setProjectDetails] = useState({
@@ -67,7 +67,12 @@ function ProjectDetail() {
         <>
           <h3>{projectDetails.name}</h3>
           <div className="w-100 my-3 d-flex justify-content-end">
-            <button className="btn btn-sm btn-warning me-2">Editar</button>
+            <Link
+              className="btn btn-sm btn-warning me-2"
+              to={`/projeto/editar/${id}`}
+            >
+              Editar
+            </Link>
             <button
               className="btn btn-sm btn-danger"
               onClick={() => handleModalOpen()} // Ao clicar no botão deletar, perguntamos ao usuário se ele tem certeza
@@ -134,7 +139,7 @@ function ProjectDetail() {
             {projectDetails.tasks
               .filter((taskObj) => taskObj.status === "A fazer")
               .map((taskObj) => (
-                <TaskCard taskObj={taskObj} />
+                <TaskCard key={taskObj._id} taskObj={taskObj} />
               ))}
           </div>
         </div>
@@ -144,7 +149,7 @@ function ProjectDetail() {
             {projectDetails.tasks
               .filter((taskObj) => taskObj.status === "Fazendo")
               .map((taskObj) => (
-                <TaskCard taskObj={taskObj} />
+                <TaskCard key={taskObj._id} taskObj={taskObj} />
               ))}
           </div>
         </div>
@@ -154,7 +159,7 @@ function ProjectDetail() {
             {projectDetails.tasks
               .filter((taskObj) => taskObj.status === "Feito")
               .map((taskObj) => (
-                <TaskCard taskObj={taskObj} />
+                <TaskCard key={taskObj._id} taskObj={taskObj} />
               ))}
           </div>
         </div>

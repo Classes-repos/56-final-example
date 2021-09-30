@@ -12,6 +12,8 @@ import PrivateRoute from "./auth/PrivateRoute";
 import ProjectList from "./project/ProjectList";
 import ProjectDetail from "./project/ProjectDetail";
 import ProjectDelete from "./project/ProjectDelete";
+import ProjectCreate from "./project/ProjectCreate";
+import ProjectEdit from "./project/ProjectEdit";
 
 function App() {
   return (
@@ -24,6 +26,16 @@ function App() {
           <Route path="/login" component={Login} />
           <PrivateRoute exact path="/projetos" component={ProjectList} />
           <Switch>
+            <PrivateRoute
+              exact
+              path="/projeto/criar"
+              component={ProjectCreate}
+            />
+            <PrivateRoute
+              exact
+              path="/projeto/editar/:id"
+              component={ProjectEdit}
+            />
             <PrivateRoute
               exact
               path="/projeto/deletar/:id"
