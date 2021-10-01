@@ -1,11 +1,11 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 
 import TaskForm from "./TaskForm";
 
 import api from "../../apis/api";
 import { authContext } from "../../contexts/authContext";
 
-function TaskCreate(props) {
+function TaskEdit(props) {
   const [state, setState] = useState({
     description: "",
     status: "A fazer",
@@ -13,6 +13,11 @@ function TaskCreate(props) {
   });
 
   const { loggedInUser } = useContext(authContext);
+
+  useEffect(() => {
+    // Atualiza os dados dos inputs do formulário toda vez que a tarefa selecionada mudar
+    setState({ ...props.state });
+  }, [props.state]);
 
   function handleChange(event) {
     setState({ ...state, [event.target.name]: event.target.value });
@@ -22,7 +27,7 @@ function TaskCreate(props) {
     event.preventDefault();
 
     try {
-      const response = await api.post(`/task`, {
+      const response = await api.patch(`/task/${props.state._id}`, {
         ...state,
         taskOwner: loggedInUser.user._id,
         projectId: props.projectId,
@@ -49,9 +54,9 @@ function TaskCreate(props) {
       state={state}
       handleChange={handleChange}
       handleSubmit={handleSubmit}
-      buttonText="Criar Tarefa"
+      buttonText="Editar Tarefa"
     />
   );
 }
 
-export default TaskCreate;
+export default TaskEdit;

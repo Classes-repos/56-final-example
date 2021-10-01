@@ -7,6 +7,7 @@ import LoadingSpinner from "../LoadingSpinner";
 import ConfirmationModal from "../ConfirmationModal";
 import TaskCard from "../task/TaskCard";
 import TaskCreate from "../task/TaskCreate";
+import TaskEdit from "../task/TaskEdit";
 
 function ProjectDetail() {
   const [projectDetails, setProjectDetails] = useState({
@@ -22,6 +23,11 @@ function ProjectDetail() {
   const [showModal, setShowModal] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [taskCreated, setTaskCreated] = useState(false);
+  const [taskToUpdate, setTaskToUpdate] = useState({
+    description: "",
+    status: "A fazer",
+    startDate: new Date().toISOString().split("T")[0],
+  });
 
   // Equivalente ao props.match.params.id
   const { id } = useParams();
@@ -114,7 +120,15 @@ function ProjectDetail() {
 
       <div>
         <button
-          onClick={() => setShowForm(!showForm)}
+          onClick={() => {
+            setShowForm(!showForm);
+            // Limpa a tarefa a ser atualizada quando o usuário clicar em nova tarefa
+            setTaskToUpdate({
+              description: "",
+              status: "A fazer",
+              startDate: new Date().toISOString().split("T")[0],
+            });
+          }}
           className="btn btn-primary"
         >
           Nova tarefa
@@ -123,11 +137,20 @@ function ProjectDetail() {
 
       {showForm ? (
         <div className="col-5">
-          <TaskCreate
-            projectId={id}
-            handleClose={setShowForm}
-            setTaskCreated={setTaskCreated}
-          />
+          {taskToUpdate._id ? (
+            <TaskEdit
+              state={taskToUpdate}
+              projectId={id}
+              handleClose={setShowForm}
+              setTaskCreated={setTaskCreated}
+            />
+          ) : (
+            <TaskCreate
+              projectId={id}
+              handleClose={setShowForm}
+              setTaskCreated={setTaskCreated}
+            />
+          )}
         </div>
       ) : null}
 
@@ -139,27 +162,45 @@ function ProjectDetail() {
             {projectDetails.tasks
               .filter((taskObj) => taskObj.status === "A fazer")
               .map((taskObj) => (
-                <TaskCard key={taskObj._id} taskObj={taskObj} />
+                <TaskCard
+                  key={taskObj._id}
+                  taskObj={taskObj}
+                  setTaskToUpdate={setTaskToUpdate}
+                  setShowForm={setShowForm}
+                  setTaskCreated={setTaskCreated}
+                />
               ))}
           </div>
         </div>
         <div className="col-4">
           <h3>Fazendo</h3>
-          <div className="d-flex flex-direction-column">
+          <div className="d-flex flex-column">
             {projectDetails.tasks
               .filter((taskObj) => taskObj.status === "Fazendo")
               .map((taskObj) => (
-                <TaskCard key={taskObj._id} taskObj={taskObj} />
+                <TaskCard
+                  key={taskObj._id}
+                  taskObj={taskObj}
+                  setTaskToUpdate={setTaskToUpdate}
+                  setShowForm={setShowForm}
+                  setTaskCreated={setTaskCreated}
+                />
               ))}
           </div>
         </div>
         <div className="col-4">
           <h3>Feito</h3>
-          <div className="d-flex flex-direction-column">
+          <div className="d-flex flex-column">
             {projectDetails.tasks
               .filter((taskObj) => taskObj.status === "Feito")
               .map((taskObj) => (
-                <TaskCard key={taskObj._id} taskObj={taskObj} />
+                <TaskCard
+                  key={taskObj._id}
+                  taskObj={taskObj}
+                  setTaskToUpdate={setTaskToUpdate}
+                  setShowForm={setShowForm}
+                  setTaskCreated={setTaskCreated}
+                />
               ))}
           </div>
         </div>
